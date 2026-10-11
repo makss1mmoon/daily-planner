@@ -1,0 +1,16 @@
+{
+  "name": "Daily Planner",
+  "short_name": "DailyFocus",
+  "description": "Персональный ежедневник и трекер расписания с синхронизацией ПК и телефона",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

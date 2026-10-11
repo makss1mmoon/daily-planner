@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Daily Planner & Tasks | Minimalist Noir</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#111827">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Генератор QR-кода без внешних зависимостей -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body data-theme="glass">
+  <div class="background-decor">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="app-layout">
+    <!-- Боковая панель навигации (Squircle-иконки в монохромном стиле референса) -->
+    <aside class="sidebar-dock" aria-label="Панель навигации">
+      <div class="dock-logo squircle-icon" title="Daily Planner">
+        <svg viewBox="0 0 24 24" class="pixel-fire-svg">
+          <!-- Pixel Fire из зажигалки с референса -->
+          <rect x="11" y="2" width="2" height="2" fill="currentColor"/>
+          <rect x="9" y="4" width="2" height="2" fill="currentColor"/>
+          <rect x="11" y="4" width="4" height="2" fill="currentColor"/>
+          <rect x="7" y="6" width="2" height="4" fill="currentColor"/>
+          <rect x="9" y="6" width="2" height="2" fill="rgba(255,255,255,0.4)"/>
+          <rect x="13" y="6" width="4" height="2" fill="currentColor"/>
+          <rect x="7" y="10" width="2" height="4" fill="currentColor"/>
+          <rect x="9" y="8" width="6" height="4" fill="currentColor"/>
+          <rect x="15" y="10" width="2" height="4" fill="currentColor"/>
+          <rect x="9" y="12" width="6" height="4" fill="currentColor"/>
+          <rect x="11" y="16" width="2" height="2" fill="currentColor"/>
+        </svg>
+      </div>
+
+      <nav class="dock-nav">
+        <button class="dock-btn squircle-btn active" data-view="today" title="Сегодня">
+          <svg viewBox="0 0 24 24" class="custom-svg">
+            <path d="M4 10.5 12 3l8 7.5V20a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 20v-9.5Z" fill="currentColor"/>
+            <path d="M9.5 21v-7h5v7" fill="var(--bg-main, #000)"/>
+          </svg>
+          <span class="tooltip">Сегодня</span>
+        </button>
+
+        <button class="dock-btn squircle-btn" data-view="history" title="Календарь дней">
+          <svg viewBox="0 0 24 24" class="custom-svg">
+            <rect x="4" y="5" width="16" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="2.2"/>
+            <circle cx="9" cy="11" r="1.3" fill="currentColor"/>
+            <circle cx="15" cy="11" r="1.3" fill="currentColor"/>
+            <circle cx="9" cy="15" r="1.3" fill="currentColor"/>
+            <circle cx="15" cy="15" r="1.3" fill="currentColor"/>
+            <path d="M8 3v3M16 3v3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          <span class="tooltip">Календарь</span>
+        </button>
+
+        <!-- Кнопка синхронизации ПК + Телефон -->
+        <button class="dock-btn squircle-btn" id="btn-open-sync-modal" title="Синхронизация ПК + Телефон">
+          <svg viewBox="0 0 24 24" class="custom-svg">
+            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="19" cy="5" r="3" fill="var(--accent-highlight, #2563eb)"/>
+          </svg>
+          <span class="tooltip">Синхронизация</span>
+        </button>
+
+        <button class="dock-btn squircle-btn" id="btn-theme-toggle" title="Оформление">
+          <svg viewBox="0 0 24 24" class="custom-svg">
+            <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2.2"/>
+            <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          <span class="tooltip">Тема UI</span>
+        </button>
+      </nav>
+
+      <div class="dock-bottom">
+        <button class="dock-btn squircle-btn" id="btn-sound-toggle" title="Звуки клика">
+          <svg id="icon-sound" viewBox="0 0 24 24" class="custom-svg">
+            <path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/>
+            <path d="M16 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          <span class="tooltip">Звук</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Основное пространство -->
+    <main class="main-stage">
+      <!-- Верхний статус и шапка -->
+      <header class="top-header glass-card">
+        <div class="header-left">
+          <div class="time-widget">
+            <h1 class="digital-clock" id="clock-display">00:00</h1>
+            <div class="date-meta">
+              <span class="day-name" id="day-name-display">Понедельник</span>
+              <span class="full-date" id="date-display">11 Октября 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-center">
+          <div class="search-input-box">
+            <span class="squircle-mini-badge">
+              <svg viewBox="0 0 24 24" class="icon-inner-sm">
+                <circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                <path d="m15 15 5.5 5.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <input type="text" id="search-input" placeholder="Поиск в расписании и делах..." autocomplete="off">
+            <kbd class="kbd-hint">/</kbd>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Индикатор облачной синхронизации -->
+          <button class="cloud-sync-badge" id="btn-sync-status-indicator" title="Нажмите для настроек связи с телефоном">
+            <span class="pulse-dot" id="sync-dot"></span>
+            <span class="badge-text" id="sync-status-text">Оффлайн (Локально)</span>
+          </button>
+
+          <div class="daily-auto-badge" id="auto-reset-indicator" title="Каждый день список обновляется сам!">
+            <span class="pulse-dot"></span>
+            <span class="badge-text" id="status-label">Автообновление: 00:00</span>
+          </div>
+
+          <div class="user-pill glass-card-sm">
+            <div class="avatar-ring-squircle">
+              <svg viewBox="0 0 24 24" class="icon-inner-user">
+                <circle cx="12" cy="8" r="4.2" fill="currentColor"/>
+                <path d="M4 20c0-4 4-6.5 8-6.5s8 2.5 8 6.5" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="user-info">
+              <span class="user-name">Daily Focus</span>
+              <span class="user-sub" id="streak-counter">Стрик: 1 день</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Контентная область: 3 основных колонки -->
+      <div class="workspace-grid">
+        
+        <!-- Левая колонка: Календарь, фильтры и статистика дня -->
+        <section class="grid-col left-col">
+          <!-- Виджет мини-календаря -->
+          <div class="glass-card calendar-card">
+            <div class="card-header">
+              <h3 class="card-title" id="cal-month-year">Октябрь 2026</h3>
+              <div class="cal-actions">
+                <button class="squircle-ctrl-btn" id="cal-prev" title="Предыдущий месяц">‹</button>
+                <button class="squircle-ctrl-btn" id="cal-today-btn" title="Сегодня">●</button>
+                <button class="squircle-ctrl-btn" id="cal-next" title="Следующий месяц">›</button>
+              </div>
+            </div>
+            <div class="calendar-grid">
+              <div class="cal-weekdays">
+                <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+              </div>
+              <div class="cal-days" id="cal-days-grid">
+                <!-- Дни генерируются скриптом -->
+              </div>
+            </div>
+            <div class="cal-footer">
+              <span class="cal-legend-item"><span class="legend-dot active"></span> Выбранный день</span>
+              <span class="cal-legend-item"><span class="legend-dot has-tasks"></span> Расписание готово</span>
+            </div>
+          </div>
+
+          <!-- Прогресс дня и метрики -->
+          <div class="glass-card stats-card">
+            <div class="card-header">
+              <h3 class="card-title">Прогресс дня</h3>
+              <span class="percent-badge" id="progress-percentage">0%</span>
+            </div>
+            <div class="progress-bar-wrapper">
+              <div class="progress-fill" id="progress-bar-fill" style="width: 0%"></div>
+            </div>
+            <div class="stats-counters">
+              <div class="stat-item">
+                <span class="stat-num" id="stat-total">0</span>
+                <span class="stat-desc">Всего</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <span class="stat-num stat-done" id="stat-done">0</span>
+                <span class="stat-desc">Сделано</span>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <span class="stat-num stat-pending" id="stat-pending">0</span>
+                <span class="stat-desc">Осталось</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Быстрые фильтры / Категории (со squircle-иконками) -->
+          <div class="glass-card categories-card">
+            <div class="card-header">
+              <h3 class="card-title">Сферы дня</h3>
+              <button class="squircle-ctrl-btn" id="btn-show-all-tags" title="Сбросить фильтр">Все</button>
+            </div>
+            <div class="category-pills" id="category-filter-list">
+              <button class="cat-pill active" data-cat="all">
+                <span class="cat-pill-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="currentColor"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+                <span>Весь распорядок</span>
+              </button>
+              <button class="cat-pill" data-cat="work">
+                <span class="cat-pill-icon"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="2.2"/></svg></span>
+                <span>Работа</span>
+              </button>
+              <button class="cat-pill" data-cat="study">
+                <span class="cat-pill-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M6 6h10M6 10h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+                <span>Учёба / Английский</span>
+              </button>
+              <button class="cat-pill" data-cat="health">
+                <span class="cat-pill-icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span>
+                <span>Здоровье / Тренировка</span>
+              </button>
+              <button class="cat-pill" data-cat="personal">
+                <span class="cat-pill-icon"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/></svg></span>
+                <span>Быт / Отдых</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Центральная колонка: Добавление задач и Расписание -->
+        <section class="grid-col center-col">
+          <!-- Форма создания дополнительной задачи -->
+          <div class="glass-card task-creation-box">
+            <form id="new-task-form">
+              <div class="task-input-row">
+                <div class="squircle-icon-main">
+                  <svg viewBox="0 0 24 24" class="custom-svg">
+                    <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
+                    <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>
+                  </svg>
+                </div>
+                <input 
+                  type="text" 
+                  id="task-title-input" 
+                  class="task-text-input" 
+                  placeholder="Добавить дополнительное дело в расписание..." 
+                  required 
+                  autocomplete="off"
+                >
+                <button type="submit" class="btn-primary" id="btn-add-task">
+                  <span>Добавить</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Параметры задачи -->
+              <div class="task-creation-opts">
+                <div class="opt-group">
+                  <label for="task-category-select" class="opt-label">Категория:</label>
+                  <select id="task-category-select" class="select-soft">
+                    <option value="work">Работа</option>
+                    <option value="study">Учёба</option>
+                    <option value="health">Здоровье</option>
+                    <option value="personal">Личное</option>
+                  </select>
+                </div>
+
+                <div class="opt-group">
+                  <label for="task-priority-select" class="opt-label">Приоритет:</label>
+                  <select id="task-priority-select" class="select-soft">
+                    <option value="medium">Обычный</option>
+                    <option value="high">Высокий</option>
+                    <option value="low">Низкий</option>
+                  </select>
+                </div>
+
+                <div class="opt-group">
+                  <label for="task-time-input" class="opt-label">Время:</label>
+                  <input type="time" id="task-time-input" class="input-time-soft">
+                </div>
+
+                <div class="opt-group opt-check">
+                  <label class="custom-checkbox-label" title="Задача будет повторяться каждый день">
+                    <input type="checkbox" id="task-recurring-input">
+                    <span class="custom-checkbox"></span>
+                    <span class="check-text">Каждый день</span>
+                  </label>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Список задач / Таймлайн расписания -->
+          <div class="glass-card task-list-card">
+            <div class="list-controls-bar">
+              <div class="viewing-info">
+                <span class="target-date-title" id="current-view-title">Планы на Сегодня</span>
+                <span class="task-count-tag" id="task-count-badge">0 пунктов</span>
+              </div>
+              <div class="list-filter-actions">
+                <div class="segmented-control">
+                  <button class="seg-btn active" data-filter="all">Все</button>
+                  <button class="seg-btn" data-filter="active">В процессе</button>
+                  <button class="seg-btn" data-filter="completed">Сделано</button>
+                </div>
+                <button class="squircle-ctrl-btn" id="btn-clear-completed" title="Очистить завершенные">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Контейнер для карточек задач -->
+            <div class="tasks-container" id="tasks-list">
+              <!-- Сюда динамически рендерятся элементы -->
+            </div>
+
+            <!-- Пустое состояние -->
+            <div class="empty-state" id="empty-state-view">
+              <div class="empty-illustration squircle-badge-lg">
+                <svg viewBox="0 0 24 24" class="custom-svg-lg">
+                  <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+                  <polyline points="9 12 11 14 15 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <h4>На этот день задач нет</h4>
+              <p>Создайте новую задачу в форме сверху или отметьте ежедневный фокус.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Правая колонка: Фокусы, плеер концентрации и заметки -->
+        <section class="grid-col right-col">
+          <!-- Виджет привычек / рутины -->
+          <div class="glass-card habits-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Главный фокус дня</h3>
+                <p class="card-subtitle">Чтение, язык, режим и тренировки</p>
+              </div>
+              <button class="squircle-ctrl-btn" id="btn-add-habit-modal" title="Добавить фокус">+</button>
+            </div>
+            <div class="habits-list" id="habits-container">
+              <!-- Список фокусов -->
+            </div>
+          </div>
+
+          <!-- Мини-плеер концентрации -->
+          <div class="glass-card ambient-player-card">
+            <div class="ambient-visual">
+              <div class="squircle-icon-player">
+                <svg viewBox="0 0 24 24" class="pixel-fire-sm">
+                  <path d="M12 3c-1.5 2-3 4-3 6.5a3 3 0 0 0 6 0C15 7 13.5 5 12 3Z" fill="currentColor"/>
+                  <path d="M12 7.5a1.5 1.5 0 0 0-1.5 1.5c0 1 .5 1.5 1.5 2.5 1-1 1.5-1.5 1.5-2.5a1.5 1.5 0 0 0-1.5-1.5Z" fill="var(--bg-main, #fff)"/>
+                </svg>
+              </div>
+              <div class="ambient-info">
+                <span class="ambient-title" id="ambient-title-text">Фокус и Шум</span>
+                <span class="ambient-status" id="ambient-state-text">Мягкий альфа-гул</span>
+              </div>
+            </div>
+            <div class="ambient-controls">
+              <button class="player-btn" id="ambient-prev" title="Предыдущий">
+                <svg viewBox="0 0 24 24" width="13" height="13"><polygon points="19 20 9 12 19 4 19 20" fill="currentColor"/><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5"/></svg>
+              </button>
+              <button class="player-btn player-play" id="ambient-toggle" title="Включить / Выключить">
+                <svg id="ambient-play-icon" viewBox="0 0 24 24" width="14" height="14"><polygon points="6 4 20 12 6 20 6 4" fill="currentColor"/></svg>
+              </button>
+              <button class="player-btn" id="ambient-next" title="Следующий">
+                <svg viewBox="0 0 24 24" width="13" height="13"><polygon points="5 4 15 12 5 20 5 4" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Заметки дня -->
+          <div class="glass-card notes-card">
+            <div class="card-header">
+              <h3 class="card-title">Мысли и заметки</h3>
+              <span class="autosave-tag" id="notes-status">Сохранено</span>
+            </div>
+            <textarea 
+              id="daily-notes-textarea" 
+              class="notes-textarea" 
+              placeholder="Идеи, выводы, меню готовки на завтра или рефлексия..."
+            ></textarea>
+          </div>
+
+          <!-- Настройки дня & Синхронизация -->
+          <div class="glass-card settings-mini-card">
+            <div class="settings-row">
+              <div class="setting-desc">
+                <strong>Перенос хвостов</strong>
+                <span>Невыполненные ручные дела переносить на завтра</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="setting-rollover" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="settings-actions">
+              <button class="btn-subtle" id="btn-sync-action-btn">Телефон 📱</button>
+              <button class="btn-subtle" id="btn-test-new-day" title="Имитировать следующий день">Тест: Новый день</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Модальное окно: СИНХРОНИЗАЦИЯ ПК + ТЕЛЕФОН -->
+  <div class="modal-backdrop" id="sync-modal" style="display: none;">
+    <div class="modal-card glass-card sync-modal-content">
+      <div class="modal-header">
+        <div>
+          <h3>Синхронизация с телефоном</h3>
+          <p class="card-subtitle">Откройте этот же список с любого устройства</p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-sync-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="sync-pin-banner">
+          <span class="pin-label">Ваш секретный код синхронизации:</span>
+          <div class="pin-display-row">
+            <span class="sync-pin-value" id="current-sync-pin">------</span>
+            <button class="btn-subtle" id="btn-copy-pin" title="Скопировать PIN код">Код</button>
+            <button class="btn-subtle" id="btn-copy-sync-link" title="Скопировать готовую ссылку для телефона">Ссылка для телефона 🔗</button>
+          </div>
+          <p class="sync-pin-hint">Любые отметки на компьютере сразу появятся в телефоне, и наоборот.</p>
+        </div>
+
+        <!-- QR код для моментального открытия камерой телефона -->
+        <div class="qr-section">
+          <canvas id="sync-qr-canvas" class="qr-canvas"></canvas>
+          <span class="qr-desc">Наведите камеру смартфона, чтобы открыть сайт с вашим расписанием</span>
+        </div>
+
+        <div class="sync-input-row">
+          <label class="opt-label">Или подключиться к существующему коду:</label>
+          <div class="pin-connect-box">
+            <input type="text" id="manual-pin-input" class="task-text-input" placeholder="Введите PIN код..." maxlength="12">
+            <button class="btn-primary" id="btn-connect-pin">Связать</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn-subtle" id="btn-force-push">Принудительно отправить в облако ↑</button>
+        <button class="btn-primary" id="btn-close-sync-modal-footer">Готово</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно создания фокуса -->
+  <div class="modal-backdrop" id="habit-modal" style="display: none;">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h3>Новый ежедневный фокус</h3>
+        <button class="modal-close-btn" id="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="opt-label">Название фокуса:</label>
+        <input type="text" id="habit-title-input" class="task-text-input mb-3" placeholder="Например: 20 мин чтения, тренировка">
+        <label class="opt-label">Фирменный значок:</label>
+        <div class="icon-selector-grid">
+          <button type="button" class="squircle-choice active" data-icon="star" title="Звезда / Фокус">
+            <svg viewBox="0 0 24 24"><path d="M12 2.5 L14.5 9.5 L21.5 12 L14.5 14.5 L12 21.5 L9.5 14.5 L2.5 12 L9.5 9.5 Z" fill="currentColor"/></svg>
+          </button>
+          <button type="button" class="squircle-choice" data-icon="water" title="Вода / Чистота">
+            <svg viewBox="0 0 24 24"><path d="M12 3C8 8.5 6 12 6 15a6 6 0 0 0 12 0c0-3-2-6.5-6-12Z" fill="currentColor"/></svg>
+          </button>
+          <button type="button" class="squircle-choice" data-icon="book" title="Чтение / Учеба">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" fill="none" stroke="currentColor" stroke-width="2.2"/><line x1="6" y1="6" x2="16" y2="6" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <button type="button" class="squircle-choice" data-icon="run" title="Спорт / Тренировка">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="currentColor"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <button type="button" class="squircle-choice" data-icon="target" title="Цель / Приоритет">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="2.2"/></svg>
+          </button>
+          <button type="button" class="squircle-choice" data-icon="code" title="Код / Работа">
+            <svg viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M13 6l-2 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-subtle" id="btn-cancel-modal">Отмена</button>
+        <button class="btn-primary" id="btn-save-habit">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Всплывающий стек оповещений -->
+  <div class="toast-stack" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

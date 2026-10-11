@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <rect width="128" height="128" rx="28" fill="#111827"/>
+  <!-- Pixel fire logo -->
+  <rect x="58" y="24" width="12" height="12" fill="#ffffff"/>
+  <rect x="46" y="36" width="12" height="12" fill="#ffffff"/>
+  <rect x="58" y="36" width="24" height="12" fill="#ffffff"/>
+  <rect x="34" y="48" width="12" height="24" fill="#ffffff"/>
+  <rect x="46" y="48" width="12" height="12" fill="rgba(255,255,255,0.4)"/>
+  <rect x="70" y="48" width="24" height="12" fill="#ffffff"/>
+  <rect x="34" y="72" width="12" height="24" fill="#ffffff"/>
+  <rect x="46" y="60" width="36" height="24" fill="#ffffff"/>
+  <rect x="82" y="72" width="12" height="24" fill="#ffffff"/>
+  <rect x="46" y="84" width="36" height="24" fill="#ffffff"/>
+  <rect x="58" y="100" width="12" height="12" fill="#ffffff"/>
+</svg>
